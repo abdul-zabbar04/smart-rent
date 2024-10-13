@@ -30,7 +30,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     on_created = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     on_updated = models.DateTimeField(auto_now=True, blank=True, null=True)
-    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+    profile_image = models.URLField(max_length=1024, blank=True, null=True)
 
     REQUIRED_FIELDS = ['email']  
     objects = CustomUserMagnager()

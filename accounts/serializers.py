@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import CustomUser
+from django.contrib.auth import authenticate
 
 class UserSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True, required=False)
@@ -15,21 +16,25 @@ class UserSerializer(serializers.ModelSerializer):
         email = validated_data['email']
         password = validated_data['password']
         confirm_password = validated_data['confirm_password']
-        profile_image = validated_data.get('profile_image', None) 
+        profile_image = validated_data.pop('profile_image', None) 
 
         if password != confirm_password:
             raise serializers.ValidationError({"error": "Passwords didn't match!"})
 
-        user = CustomUser(username=username, first_name=first_name, last_name=last_name, email=email, profile_image=profile_image)
+        # user = CustomUser(username=username, first_name=first_name, last_name=last_name, email=email, profile_image=profile_image)
+        user= CustomUser.objects.create(**validated_data)
         user.set_password(password)
         user.is_active = False
         user.save()
+        if profile_image:
+            user.profile_image= profile_image
+            user.save()
         return user
     
     def update(self, instance, validated_data):
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.profile_image = validated_data.get('profile_image', instance.profile_image)
+        instance.profile_image = validated_data.pop('profile_image', instance.profile_image)
         instance.save()
         return instance
 
@@ -38,9 +43,6 @@ class UserLoginSerializer(serializers.Serializer):
     username= serializers.CharField(required= True)
     password= serializers.CharField(required= True)
 
-from rest_framework import serializers
-from django.contrib.auth import authenticate
-from .models import CustomUser
 
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)

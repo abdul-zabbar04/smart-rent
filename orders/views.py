@@ -18,7 +18,7 @@ class FavoriteView(APIView):
             try:
                 post= get_object_or_404(PostModel, pk=pk)
                 print(post, "favorite post")
-                post_url= f'http://127.0.0.1:5500/frontend/post_detail.html?id={pk}'
+                post_url= f'https://smart-rent-web.netlify.app/post_detail.html?id={pk}'
                 print(post_url)
             except:
                 return Response(status=status.HTTP_204_NO_CONTENT)
@@ -55,7 +55,7 @@ class OrderView(APIView):
                     return Response({"error": "This post is already accepted and unavailable for new requests."}, status=status.HTTP_400_BAD_REQUEST)
                 post.is_order= True
                 post.save()
-                post_url= f'http://127.0.0.1:5500/frontend/post_detail.html?id={pk}'
+                post_url= f'https://smart-rent-web.netlify.app/post_detail.html?id={pk}'
                 # print(post_url, "this from the OrderView")
                 EmailSend(request.user, post.owner, 'Thanks for Rent Request.', 'orders/user_mail.html')
                 EmailSend(post.owner, request.user, 'You Received a Rent Request', 'orders/owner_mail.html')

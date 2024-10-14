@@ -8,6 +8,9 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['username', 'first_name', 'last_name', 'email', 'password', 'confirm_password', 'profile_image']
+        extra_kwargs = {
+            'password': {'write_only': True},
+        }
 
     def create(self, validated_data): 
         username = validated_data['username']
@@ -15,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
         last_name = validated_data.get('last_name', 'Not Set')   
         email = validated_data['email']
         password = validated_data['password']
-        confirm_password = validated_data['confirm_password']
+        confirm_password = validated_data.pop('confirm_password')
         profile_image = validated_data.pop('profile_image', None) 
 
         if password != confirm_password:

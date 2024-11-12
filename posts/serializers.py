@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from posts.models import PostModel, ReviewModel
+from posts.models import PostModel, ReviewModel, ContactUs
 from filterings.models import Category, District
 
 class PostSerializer(serializers.ModelSerializer):
@@ -31,3 +31,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         model= ReviewModel
         fields= ['name', 'user_full_name', 'created_on', 'rating', 'body']
         read_only_fields=['name', 'user_full_name', 'created_on']
+    
+# contact us Serializer
+class ContactUsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= ContactUs
+        fields= '__all__'

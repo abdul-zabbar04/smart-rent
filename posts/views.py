@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from posts.models import PostModel, ReviewModel
-from posts.serializers import PostSerializer, ReviewSerializer
+from posts.serializers import PostSerializer, ReviewSerializer, ContactUsSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from posts.permissions import IsOwnerOrReadOnly
@@ -45,7 +45,15 @@ class ReviewView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+# Contact Us View
+class ContactUsView(APIView):
+    serializer_class= ContactUsSerializer
 
-
+    def post(self, request):
+        serializer= ContactUsSerializer(data= request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 

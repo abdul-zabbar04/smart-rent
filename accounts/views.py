@@ -69,9 +69,15 @@ class UserProfileUpdateView(APIView):
     permission_classes = [IsAuthenticated]  # Only authenticated users can update their profile
     serializer_class = UserSerializer
 
+    def get(self, request):
+        user = request.user  # Get the currently authenticated user
+        serializer = self.serializer_class(user)  # Serialize the user data
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def patch(self, request):
         user = request.user  # Get the currently authenticated user
-        serializer = self.serializer_class(user, data=request.data, partial=True)  # partial=True allows updating specific fields
+        
+        serializer = self.serializer_class(user, data=request.data, partial=True, context={'request': request})  # partial=True allows updating specific fields
 
         if serializer.is_valid():
             serializer.save()  # Save the updated fields (first_name, last_name, profile_image)

@@ -7,14 +7,23 @@ from posts.models import PostModel
 from posts.serializers import PostSerializer
 from filterings.serializers import CategorySerializer, DistrictSerializer
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
 class CategoryFilter(viewsets.ViewSet):
     def retrieve(self, request, *args, **kwargs):
         params= kwargs.get('category')
         category= Category.objects.get(slug=params)
         posts= PostModel.objects.filter(is_published=True, category=category)
-        serializer= PostSerializer(posts, many= True, context={'request': request})
-        return Response(serializer.data)
+        # Instantiate pagination
+        paginator = PageNumberPagination()
+        paginator.page_size = 6  # Set the page size
+        # Apply pagination to the queryset
+        paginated_posts = paginator.paginate_queryset(posts, request)
+        # serializer= PostSerializer(posts, many= True, context={'request': request})
+        serializer = PostSerializer(paginated_posts, many=True, context={'request': request})
+        # return Response(serializer.data)
+        return paginator.get_paginated_response(serializer.data)
+
     
 class DistrictFilter(viewsets.ViewSet):
     def retrieve(self, request, *args, **kwargs):

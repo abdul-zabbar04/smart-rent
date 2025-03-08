@@ -16,7 +16,7 @@ class CategoryFilter(viewsets.ViewSet):
         posts= PostModel.objects.filter(is_published=True, category=category)
         # Instantiate pagination
         paginator = PageNumberPagination()
-        paginator.page_size = 6  # Set the page size
+        paginator.page_size = 10  # Set the page size
         # Apply pagination to the queryset
         paginated_posts = paginator.paginate_queryset(posts, request)
         # serializer= PostSerializer(posts, many= True, context={'request': request})

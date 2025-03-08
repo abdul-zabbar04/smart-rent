@@ -36,7 +36,7 @@ class DistrictFilter(viewsets.ViewSet):
         params= kwargs.get('district')
         try:
             dis= District.objects.get(slug=params)
-            posts= PostModel.objects.filter(district=dis)
+            posts= PostModel.objects.filter(is_published=True, district=dis)
             # Instantiate pagination
             paginator = PageNumberPagination()
             paginator.page_size = 10  # Set the page size

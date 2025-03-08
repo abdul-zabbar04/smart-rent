@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.response import Response
 from filterings.models import District, Category
 from accounts.models import CustomUser
@@ -10,11 +10,16 @@ from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
 class CategoryFilter(viewsets.ViewSet):
+    filter_backends= [filters.OrderingFilter]
+    ordering_fields = ['rent']
     def retrieve(self, request, *args, **kwargs):
         params= kwargs.get('category')
         try:
             category= Category.objects.get(slug=params)
             posts= PostModel.objects.filter(is_published=True, category=category)
+            ordering = request.query_params.get('ordering', None)
+            if ordering:
+                posts = posts.order_by(ordering)
             # Instantiate pagination
             paginator = PageNumberPagination()
             paginator.page_size = 10  # Set the page size
@@ -32,11 +37,16 @@ class CategoryFilter(viewsets.ViewSet):
 
     
 class DistrictFilter(viewsets.ViewSet):
+    filter_backends= [filters.OrderingFilter]
+    ordering_fields = ['rent']
     def retrieve(self, request, *args, **kwargs):
         params= kwargs.get('district')
         try:
             dis= District.objects.get(slug=params)
             posts= PostModel.objects.filter(is_published=True, district=dis)
+            ordering = request.query_params.get('ordering', None)
+            if ordering:
+                posts = posts.order_by(ordering)
             # Instantiate pagination
             paginator = PageNumberPagination()
             paginator.page_size = 10  # Set the page size

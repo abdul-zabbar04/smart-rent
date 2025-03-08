@@ -1,4 +1,4 @@
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from posts.models import PostModel, ReviewModel
@@ -11,11 +11,11 @@ from posts.permissions import IsOwnerOrReadOnly
 
 class PostView(viewsets.ModelViewSet):
     serializer_class= PostSerializer
-    permission_classes= [IsOwnerOrReadOnly & IsAuthenticatedOrReadOnly] # required custom permission where only owner of the post can put or delete and others get only
-
+    permission_classes= [IsOwnerOrReadOnly , IsAuthenticatedOrReadOnly]
+    filter_backends= [filters.OrderingFilter]
+    ordering_fields = ['rent']
     def get_queryset(self):
-        all_posts= PostModel.objects.filter(is_published=True)
-        return all_posts
+        return PostModel.objects.filter(is_published=True)  # Keeps default order
     
 class SinglePostReview(APIView):
     serializer_class= ReviewSerializer

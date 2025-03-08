@@ -12,17 +12,23 @@ from rest_framework.pagination import PageNumberPagination, LimitOffsetPaginatio
 class CategoryFilter(viewsets.ViewSet):
     def retrieve(self, request, *args, **kwargs):
         params= kwargs.get('category')
-        category= Category.objects.get(slug=params)
-        posts= PostModel.objects.filter(is_published=True, category=category)
-        # Instantiate pagination
-        paginator = PageNumberPagination()
-        paginator.page_size = 10  # Set the page size
-        # Apply pagination to the queryset
-        paginated_posts = paginator.paginate_queryset(posts, request)
-        # serializer= PostSerializer(posts, many= True, context={'request': request})
-        serializer = PostSerializer(paginated_posts, many=True, context={'request': request})
-        # return Response(serializer.data)
-        return paginator.get_paginated_response(serializer.data)
+        try:
+            category= Category.objects.get(slug=params)
+            posts= PostModel.objects.filter(is_published=True, category=category)
+            # Instantiate pagination
+            paginator = PageNumberPagination()
+            paginator.page_size = 10  # Set the page size
+            # Apply pagination to the queryset
+            paginated_posts = paginator.paginate_queryset(posts, request)
+            # serializer= PostSerializer(posts, many= True, context={'request': request})
+            serializer = PostSerializer(paginated_posts, many=True, context={'request': request})
+            # return Response(serializer.data)
+            return paginator.get_paginated_response(serializer.data)
+        except District.DoesNotExist:
+            return Response({"error": "District not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     
 class DistrictFilter(viewsets.ViewSet):
@@ -31,8 +37,13 @@ class DistrictFilter(viewsets.ViewSet):
         try:
             dis= District.objects.get(slug=params)
             posts= PostModel.objects.filter(district=dis)
-            serializer= PostSerializer(posts, many= True)
-            return Response(serializer.data)
+            # Instantiate pagination
+            paginator = PageNumberPagination()
+            paginator.page_size = 10  # Set the page size
+            # Apply pagination to the queryset
+            paginated_posts = paginator.paginate_queryset(posts, request)
+            serializer = PostSerializer(paginated_posts, many=True, context={'request': request})
+            return paginator.get_paginated_response(serializer.data)
         except District.DoesNotExist:
             return Response({"error": "District not found"}, status=status.HTTP_404_NOT_FOUND)
         

@@ -28,10 +28,18 @@ class CategoryFilter(viewsets.ViewSet):
 class DistrictFilter(viewsets.ViewSet):
     def retrieve(self, request, *args, **kwargs):
         params= kwargs.get('district')
-        dis= District.objects.get(slug=params)
-        posts= PostModel.objects.filter(district=dis)
-        serializer= PostSerializer(posts, many= True)
-        return Response(serializer.data)
+        try:
+            dis= District.objects.get(slug=params)
+            posts= PostModel.objects.filter(district=dis)
+            serializer= PostSerializer(posts, many= True)
+            return Response(serializer.data)
+        except District.DoesNotExist:
+            return Response({"error": "District not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        
     
 class OwnerFilter(viewsets.ViewSet):
     def retrieve(self, request, *args, **kwargs):

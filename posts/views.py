@@ -6,7 +6,8 @@ from posts.serializers import PostSerializer, ReviewSerializer, ContactUsSeriali
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from posts.permissions import IsOwnerOrReadOnly
-
+from rest_framework.generics import CreateAPIView
+from .serializers import NewsLetterSerializer
 # Create your views here.
 
 class PostView(viewsets.ModelViewSet):
@@ -56,4 +57,5 @@ class ContactUsView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
+class NewsletterView(CreateAPIView):
+    serializer_class= NewsLetterSerializer

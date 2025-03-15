@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from posts.models import PostModel, ReviewModel, ContactUs
 from filterings.models import Category, District
-
+from .models import Newsletter
 class PostSerializer(serializers.ModelSerializer):
     category = serializers.SlugRelatedField(many=True, slug_field='slug', queryset=Category.objects.all())
     district = serializers.SlugRelatedField(many=False, slug_field='slug', queryset=District.objects.all())
@@ -36,4 +36,9 @@ class ReviewSerializer(serializers.ModelSerializer):
 class ContactUsSerializer(serializers.ModelSerializer):
     class Meta:
         model= ContactUs
+        fields= '__all__'
+
+class NewsLetterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Newsletter
         fields= '__all__'

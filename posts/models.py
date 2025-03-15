@@ -95,6 +95,12 @@ class ContactUs(models.Model):
     def __str__(self):
         return self.email
 
+class Newsletter(models.Model):
+    email= models.EmailField()
+    created_no= models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.email
+
 
 
     
